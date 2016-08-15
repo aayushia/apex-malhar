@@ -1,15 +1,14 @@
 {"keys":
   [
-    {"name":"pickup_datetime","type":"string"}
+
   ],
   "timeBuckets":["1m","1h","1d"],
   "values":
   [
-    {"name":"total_amount","type":"float","aggregators":["SUM","MAX"]}
+    {"name":"total_amount","type":"double","aggregators":["SUM","MAX"]}
   ],
   "dimensions":
   [
-    {"combination":["pickup_datetime"]},
     {"combination":[]}
   ]
 }
