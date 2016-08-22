@@ -3,8 +3,8 @@
   "quoteChar":"\"",
   "fields": [
     {
-      "name": "vendor_id",
-      "type": "Integer"
+      "name": "vendor",
+      "type": "String"
     },
     {
       "name": "pickup_datetime",
@@ -48,7 +48,7 @@
     },
     {
       "name": "payment_type",
-      "type": "Integer"
+      "type": "String"
     },
     {
       "name": "fare_amount",
@@ -68,10 +68,6 @@
     },
     {
       "name": "tolls_amount",
-      "type": "Double"
-    },
-    {
-      "name": "improvement_surcharge",
       "type": "Double"
     },
     {

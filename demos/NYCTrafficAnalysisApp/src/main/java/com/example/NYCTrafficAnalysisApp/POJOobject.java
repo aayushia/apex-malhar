@@ -10,7 +10,7 @@ import java.util.TimeZone;
  */
 public class POJOobject {
 
-    private int vendor_id;
+    private String vendor;
     private long pickup_datetime;
     private long dropoff_datetime;
     private int passenger_count;
@@ -21,7 +21,7 @@ public class POJOobject {
     private String store_and_fwd_flag;
     private double dropoff_longitude;
     private double dropoff_latitude;
-    private int payment_type;
+    private String payment_type;
     private double fare_amount;
     private double extra;
     private double mta_tax;
@@ -33,14 +33,14 @@ public class POJOobject {
     @Override
     public String toString()
     {
-        return "POJOobject [pickup_datetime=" + pickup_datetime + ", total_amount=" + total_amount + "]";
+        return "POJOobject [pickup_datetime=" + pickup_datetime + ", trip_distance=" + trip_distance + ", total_amount=" + total_amount + "]";
     }
 
     //return "POJOobject [vendor_id=" + vendor_id + ", pickup_datetime=" + pickup_datetime + */ ", cartype=" + cartype + ", time=" + time + ", fare=" + fare + "]";
 
-    public void setVendor_id(int vendor_id)
+    public void setVendor(String vendor)
     {
-        this.vendor_id = vendor_id;
+        this.vendor = vendor;
     }
 
     public long getPickup_datetime()
@@ -50,7 +50,7 @@ public class POJOobject {
 
     public void setPickup_datetime(String pickup_datetime) throws ParseException
     {
-        SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yy HH:mm");
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         //formatter.setTimeZone(TimeZone.getTimeZone("GMT-5"));
         Date parsedTime = formatter.parse(pickup_datetime);
         this.pickup_datetime = parsedTime.getTime();
@@ -58,7 +58,7 @@ public class POJOobject {
 
     public void setDropoff_datetime(String dropoff_datetime) throws ParseException
     {
-        SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yy HH:mm");
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         //formatter.setTimeZone(TimeZone.getTimeZone("GMT-5"));
         Date parsedTime = formatter.parse(dropoff_datetime);
         this.dropoff_datetime = parsedTime.getTime();
@@ -67,6 +67,11 @@ public class POJOobject {
     public void setPassenger_count(int passenger_count)
     {
         this.passenger_count = passenger_count;
+    }
+
+    public double getTrip_distance()
+    {
+        return trip_distance;
     }
 
     public void setTrip_distance(double trip_distance)
@@ -104,7 +109,7 @@ public class POJOobject {
         this.dropoff_latitude = dropoff_latitude;
     }
 
-    public void setPayment_type(int payment_type)
+    public void setPayment_type(String payment_type)
     {
         this.payment_type = payment_type;
     }
@@ -134,10 +139,10 @@ public class POJOobject {
         this.tolls_amount = tolls_amount;
     }
 
-    public void setImprovement_surcharge(double improvement_surcharge)
-    {
-        this.improvement_surcharge = improvement_surcharge;
-    }
+//    public void setImprovement_surcharge(double improvement_surcharge)
+//    {
+//        this.improvement_surcharge = improvement_surcharge;
+//    }
 
     public double getTotal_amount()
     {
