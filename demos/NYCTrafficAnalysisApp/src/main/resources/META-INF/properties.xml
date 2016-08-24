@@ -22,6 +22,11 @@
   </property>
 
   <property>
+    <name>dt.application.NYCTrafficAnalysisApp.operator.Parser.attr.PARTITIONER</name>
+    <value>com.datatorrent.common.partitioner.StatelessPartitioner:2</value>
+  </property>
+
+  <property>
     <name>dt.application.NYCTrafficAnalysisApp.operator.StoreHDHT.fileStore.basePathPrefix</name>
     <value>CS/Store</value>
   </property>

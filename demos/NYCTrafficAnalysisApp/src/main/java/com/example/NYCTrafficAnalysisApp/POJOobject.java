@@ -33,10 +33,8 @@ public class POJOobject {
     @Override
     public String toString()
     {
-        return "POJOobject [pickup_datetime=" + pickup_datetime + ", trip_distance=" + trip_distance + ", total_amount=" + total_amount + "]";
+        return "POJOobject [pickup_datetime=" + pickup_datetime + /*", dropoff_datetime=" + dropoff_datetime + /*", passenger_count=" + passenger_count +*/ ", trip_distance=" + trip_distance + /*", pickup_longitude=" + pickup_longitude + ", pickup_latitude=" + pickup_latitude +*/ ", total_amount=" + total_amount + "]";
     }
-
-    //return "POJOobject [vendor_id=" + vendor_id + ", pickup_datetime=" + pickup_datetime + */ ", cartype=" + cartype + ", time=" + time + ", fare=" + fare + "]";
 
     public void setVendor(String vendor)
     {
@@ -56,12 +54,22 @@ public class POJOobject {
         this.pickup_datetime = parsedTime.getTime();
     }
 
+    public long getDropoff_datetime()
+    {
+        return dropoff_datetime;
+    }
+
     public void setDropoff_datetime(String dropoff_datetime) throws ParseException
     {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         //formatter.setTimeZone(TimeZone.getTimeZone("GMT-5"));
         Date parsedTime = formatter.parse(dropoff_datetime);
         this.dropoff_datetime = parsedTime.getTime();
+    }
+
+    public int getPassenger_count()
+    {
+        return passenger_count;
     }
 
     public void setPassenger_count(int passenger_count)
@@ -79,9 +87,19 @@ public class POJOobject {
         this.trip_distance = trip_distance;
     }
 
+    public double getPickup_longitude()
+    {
+        return pickup_longitude;
+    }
+
     public void setPickup_longitude(double pickup_longitude)
     {
         this.pickup_longitude = pickup_longitude;
+    }
+
+    public double getPickup_latitude()
+    {
+        return pickup_latitude;
     }
 
     public void setPickup_latitude(double pickup_latitude)

@@ -20,7 +20,7 @@ import com.google.common.collect.Maps;
 import com.datatorrent.api.annotation.ApplicationAnnotation;
 import com.datatorrent.api.StreamingApplication;
 import com.datatorrent.api.DAG;
-import com.datatorrent.lib.counters.BasicCounters;
+import com.datatorrent.api.Context.OperatorContext;
 import com.datatorrent.lib.fileaccess.TFileImpl;
 import com.datatorrent.lib.appdata.schemas.SchemaUtils;
 import com.datatorrent.api.Context;
@@ -40,7 +40,6 @@ public class NYCTrafficAnalysisApp implements StreamingApplication
 
   protected String PROP_STORE_PATH;
 
-  @Override
   public void populateDAG(DAG dag, Configuration conf)
   {
     PROP_STORE_PATH = "dt.application." + appName + ".operator.StoreHDHT.fileStore.basePathPrefix";
@@ -49,6 +48,7 @@ public class NYCTrafficAnalysisApp implements StreamingApplication
 
     LineByLineFileInputOperator reader = dag.addOperator("Reader",  LineByLineFileInputOperator.class);
     CsvParser parser = dag.addOperator("Parser", CsvParser.class);
+    dag.getMeta(parser).getAttributes().put(OperatorContext.MEMORY_MB, 4096);
     ConsoleOutputOperator consoleOutput = dag.addOperator("Console", ConsoleOutputOperator.class);
 
     //PubSubWebSocketAppDataQuery query = dag.addOperator("Query", PubSubWebSocketAppDataQuery.class);
@@ -65,6 +65,8 @@ public class NYCTrafficAnalysisApp implements StreamingApplication
     {
       Map<String, String> keyToExpression = Maps.newHashMap();
       keyToExpression.put("time", "getPickup_datetime()");
+      //keyToExpression.put("dropoff_datetime", "getDropoff_datetime()");
+      //keyToExpression.put("pickup_longitude", "getPickup_longitude()");
       dimensions.setKeyToExpression(keyToExpression);
     }
 
@@ -73,6 +75,7 @@ public class NYCTrafficAnalysisApp implements StreamingApplication
       Map<String, String> aggregateToExpression = Maps.newHashMap();
       aggregateToExpression.put("total_amount", "getTotal_amount()");
       aggregateToExpression.put("trip_distance", "getTotal_amount()");
+     // aggregateToExpression.put("passenger_count", "getPassenger_count()");
       dimensions.setAggregateToExpression(aggregateToExpression);
     }
 
@@ -88,8 +91,6 @@ public class NYCTrafficAnalysisApp implements StreamingApplication
     hdsFile.setBasePath(basePath);
     store.setFileStore(hdsFile);
 
-    dag.setAttribute(store, Context.OperatorContext.COUNTERS_AGGREGATOR,
-    new BasicCounters.LongAggregator<MutableLong>());
     store.setConfigurationSchemaJSON(dcSchema);
 
     //Query
@@ -108,8 +109,8 @@ public class NYCTrafficAnalysisApp implements StreamingApplication
     dag.addOperator("QueryResult", queryResult);
 
     //Set remaining dag options
-    dag.setAttribute(store, Context.OperatorContext.COUNTERS_AGGREGATOR,
-    new BasicCounters.LongAggregator<MutableLong>());
+    //dag.setAttribute(store, Context.OperatorContext.COUNTERS_AGGREGATOR,
+    //new BasicCounters.LongAggregator<MutableLong>());
 
     dag.setOutputPortAttribute(parser.outDup, Context.PortContext.TUPLE_CLASS, POJOobject.class);
     dag.setOutputPortAttribute(parser.out, Context.PortContext.TUPLE_CLASS, POJOobject.class);

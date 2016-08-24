@@ -76,17 +76,17 @@ public class LineByLineFileInputOperator extends AbstractFileInputOperator<Strin
   @Override
   protected void emit(String tuple)
   {
-    byte[] bytes = tuple.getBytes();
-    output.emit(bytes);
-//    try
-//    {
 //    byte[] bytes = tuple.getBytes();
 //    output.emit(bytes);
-//    Thread.sleep(10);
-//    }
-//    catch (InterruptedException e)
-//    {
-//      e.printStackTrace();
-//    }
+    try
+    {
+    byte[] bytes = tuple.getBytes();
+    output.emit(bytes);
+    Thread.sleep(1);
+    }
+    catch (InterruptedException e)
+    {
+      e.printStackTrace();
+    }
   }
 }
