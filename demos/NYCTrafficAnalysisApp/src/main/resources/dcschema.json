@@ -5,8 +5,8 @@
   "timeBuckets":["1h","1d"],
   "values":
   [
-    {"name":"total_amount","type":"double","aggregators":["MIN","MAX"]},
-    {"name":"trip_distance","type":"double","aggregators":["AVG"]}
+    {"name":"total_amount","type":"double","aggregators":["AVG"]},
+    {"name":"trip_distance","type":"double","aggregators":["MIN","MAX"]}
   ],
   "dimensions":
   [

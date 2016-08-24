@@ -74,7 +74,7 @@ public class NYCTrafficAnalysisApp implements StreamingApplication
     {
       Map<String, String> aggregateToExpression = Maps.newHashMap();
       aggregateToExpression.put("total_amount", "getTotal_amount()");
-      aggregateToExpression.put("trip_distance", "getTotal_amount()");
+      aggregateToExpression.put("trip_distance", "getTrip_distance()");
      // aggregateToExpression.put("passenger_count", "getPassenger_count()");
       dimensions.setAggregateToExpression(aggregateToExpression);
     }
