@@ -1,15 +1,16 @@
 {"keys":
   [
-
+    {"name":"trip_distance","type":"double"},
+    {"name":"pickup_longitude","type":"double"},
+    {"name":"pickup_latitude","type":"double"}
   ],
   "timeBuckets":["1h","1d"],
   "values":
   [
-    {"name":"total_amount","type":"double","aggregators":["AVG"]},
-    {"name":"trip_distance","type":"double","aggregators":["MIN","MAX"]}
+    {"name":"total_amount","type":"double","aggregators":["AVG"]}
   ],
   "dimensions":
   [
-    {"combination":[]}
+    {"combination":["trip_distance","pickup_longitude","pickup_latitude"]}
   ]
 }

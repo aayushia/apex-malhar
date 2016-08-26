@@ -73,7 +73,7 @@ public class LineByLineFileInputOperator extends AbstractFileInputOperator<Strin
     return br.readLine();
   }
 
-  int emittedTuples = 0;
+  private int emittedTuples = 0;
   @Override
   protected void emit(String tuple)
   {
@@ -83,8 +83,8 @@ public class LineByLineFileInputOperator extends AbstractFileInputOperator<Strin
     {
     byte[] bytes = tuple.getBytes();
     output.emit(bytes);
-      if(++emittedTuples % 50 == 0)
-        Thread.sleep(1);
+      if(++emittedTuples % 2 == 0)
+        Thread.sleep(10);
     }
     catch (InterruptedException e)
     {

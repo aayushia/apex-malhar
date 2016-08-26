@@ -3,7 +3,8 @@
  */
 package com.example.NYCTrafficAnalysisApp;
 
-import org.apache.apex.malhar.lib.dimensions.DimensionsEvent;
+import org.apache.apex.malhar.lib.dimensions.DimensionsEvent.Aggregate;
+import org.apache.apex.malhar.lib.dimensions.DimensionsEvent.InputEvent;
 import org.apache.commons.lang.mutable.MutableLong;
 import org.apache.hadoop.conf.Configuration;
 import com.datatorrent.lib.expression.JavaExpressionParser;
@@ -47,9 +48,10 @@ public class NYCTrafficAnalysisApp implements StreamingApplication
     String dcSchema = SchemaUtils.jarResourceFileToString("dcSchema.json");
 
     LineByLineFileInputOperator reader = dag.addOperator("Reader",  LineByLineFileInputOperator.class);
+    dag.getMeta(reader).getAttributes().put(OperatorContext.MEMORY_MB, 3072);
     CsvParser parser = dag.addOperator("Parser", CsvParser.class);
     dag.getMeta(parser).getAttributes().put(OperatorContext.MEMORY_MB, 4096);
-    ConsoleOutputOperator consoleOutput = dag.addOperator("Console", ConsoleOutputOperator.class);
+    //ConsoleOutputOperator consoleOutput = dag.addOperator("Console", ConsoleOutputOperator.class);
 
     //PubSubWebSocketAppDataQuery query = dag.addOperator("Query", PubSubWebSocketAppDataQuery.class);
     //PubSubWebSocketAppDataResult queryResult = dag.addOperator("QueryResult", PubSubWebSocketAppDataResult.class);
@@ -60,13 +62,18 @@ public class NYCTrafficAnalysisApp implements StreamingApplication
     //Dimension Computation
     DimensionsComputationFlexibleSingleSchemaPOJO dimensions = dag.addOperator("DimensionsComputation", DimensionsComputationFlexibleSingleSchemaPOJO.class);
     //Set operator properties
+    //dag.getMeta(dimensions).getAttributes().put(OperatorContext.MEMORY_MB, 4096);
+    dag.setAttribute(dimensions, OperatorContext.MEMORY_MB, 4096);
+
 
     //Key expression
     {
       Map<String, String> keyToExpression = Maps.newHashMap();
       keyToExpression.put("time", "getPickup_datetime()");
+      keyToExpression.put("trip_distance", "getTrip_distance()");
       //keyToExpression.put("dropoff_datetime", "getDropoff_datetime()");
-      //keyToExpression.put("pickup_longitude", "getPickup_longitude()");
+      keyToExpression.put("pickup_longitude", "getPickup_longitude()");
+      keyToExpression.put("pickup_latitude", "getPickup_latitude()");
       dimensions.setKeyToExpression(keyToExpression);
     }
 
@@ -74,13 +81,15 @@ public class NYCTrafficAnalysisApp implements StreamingApplication
     {
       Map<String, String> aggregateToExpression = Maps.newHashMap();
       aggregateToExpression.put("total_amount", "getTotal_amount()");
-      aggregateToExpression.put("trip_distance", "getTrip_distance()");
+     // aggregateToExpression.put("trip_distance", "getTrip_distance()");
      // aggregateToExpression.put("passenger_count", "getPassenger_count()");
       dimensions.setAggregateToExpression(aggregateToExpression);
     }
 
     dimensions.setConfigurationSchemaJSON(dcSchema);
-    dimensions.setUnifier(new DimensionsComputationUnifierImpl<DimensionsEvent.InputEvent, DimensionsEvent.Aggregate>());
+    dimensions.setUnifier(new DimensionsComputationUnifierImpl<InputEvent, Aggregate>());
+    dag.setUnifierAttribute(dimensions.output, OperatorContext.MEMORY_MB, 3072);
+    //dag.setUnifierAttribute(dimensions.output, Context.PortContext.UNIFIER_LIMIT, 2);
 
     //Dimension Store
     AppDataSingleSchemaDimensionStoreHDHT store = dag.addOperator("StoreHDHT", AppDataSingleSchemaDimensionStoreHDHT.class);
@@ -112,19 +121,16 @@ public class NYCTrafficAnalysisApp implements StreamingApplication
     //dag.setAttribute(store, Context.OperatorContext.COUNTERS_AGGREGATOR,
     //new BasicCounters.LongAggregator<MutableLong>());
 
-    dag.setOutputPortAttribute(parser.outDup, Context.PortContext.TUPLE_CLASS, POJOobject.class);
+    //dag.setOutputPortAttribute(parser.outDup, Context.PortContext.TUPLE_CLASS, POJOobject.class);
     dag.setOutputPortAttribute(parser.out, Context.PortContext.TUPLE_CLASS, POJOobject.class);
-    dag.setInputPortAttribute(consoleOutput.input, Context.PortContext.TUPLE_CLASS, POJOobject.class);
+    //dag.setInputPortAttribute(consoleOutput.input, Context.PortContext.TUPLE_CLASS, POJOobject.class);
     dag.setInputPortAttribute(dimensions.input, Context.PortContext.TUPLE_CLASS, POJOobject.class);
 
     dag.addStream("FileInputToParser", reader.output, parser.in);
-    dag.addStream("ParserToConsole", parser.outDup, consoleOutput.input);
+    //dag.addStream("ParserToConsole", parser.outDup, consoleOutput.input);
     dag.addStream("ParserToDC", parser.out, dimensions.input);
     dag.addStream("DimensionalStreamToStore", dimensions.output, store.input);
     dag.addStream("StoreToQueryResult", store.queryResult, queryResult.input);
-
-    //dag.addStream("FileInputToConsole", reader.output, consoleOutput.input);
-    //dag.addStream("randomData", randomGenerator.out, cons.input).setLocality(Locality.CONTAINER_LOCAL);
   }
 
   protected PubSubWebSocketAppDataQuery createAppDataQuery()
