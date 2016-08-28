@@ -44,15 +44,12 @@ public class NYCTrafficAnalysisAppTest extends NYCTrafficAnalysisApp
       {
       }
     };
-
     lma.prepareDAG(app, conf);
 
     // Create local cluster
     final LocalMode.Controller lc = lma.getController();
     lc.runAsync();
-
     Thread.sleep(runTime);
-
     lc.shutdown();
   }
 
@@ -60,7 +57,7 @@ public class NYCTrafficAnalysisAppTest extends NYCTrafficAnalysisApp
   protected PubSubWebSocketAppDataQuery createAppDataQuery()
   {
     PubSubWebSocketAppDataQuery query = new PubSubWebSocketAppDataQuery();
-    query.setTopic("NYCTrafficAnalysisApp-query");
+    query.setTopic("Query Topic");
     try {
       query.setUri(new URI("ws://localhost:9090/pubsub"));
     } catch (URISyntaxException uriE) {
@@ -74,7 +71,7 @@ public class NYCTrafficAnalysisAppTest extends NYCTrafficAnalysisApp
   protected PubSubWebSocketAppDataResult createAppDataResult()
   {
     PubSubWebSocketAppDataResult queryResult = new PubSubWebSocketAppDataResult();
-    queryResult.setTopic("NYCTrafficAnalysisApp-result");
+    queryResult.setTopic("Result Topic");
     try {
       queryResult.setUri(new URI("ws://localhost:9090/pubsub"));
     } catch (URISyntaxException uriE) {

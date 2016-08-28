@@ -175,12 +175,12 @@ public class CsvParser extends Parser<byte[], KeyValPair<String, String>>
                 emittedObjectCount++;
             }
 
-            if (outDup.isConnected() && clazz != null) {
-                csvStringReader.open(incomingString);
-                Object objDup = csvBeanReader.read(clazz, nameMapping, processors);
-                outDup.emit(objDup);
-                dupEmittedObjectCount++;
-            }
+//            if (outDup.isConnected() && clazz != null) {
+//                csvStringReader.open(incomingString);
+//                Object objDup = csvBeanReader.read(clazz, nameMapping, processors);
+//                outDup.emit(objDup);
+//                dupEmittedObjectCount++;
+//            }
 
         } catch (SuperCsvException | IOException | IllegalArgumentException e) {
             if (err.isConnected()) {

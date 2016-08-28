@@ -1,8 +1,6 @@
 {"keys":
   [
-    {"name":"trip_distance","type":"double"},
-    {"name":"pickup_longitude","type":"double"},
-    {"name":"pickup_latitude","type":"double"}
+
   ],
   "timeBuckets":["1h","1d"],
   "values":
@@ -11,6 +9,6 @@
   ],
   "dimensions":
   [
-    {"combination":["trip_distance","pickup_longitude","pickup_latitude"]}
+    {"combination":[]}
   ]
 }

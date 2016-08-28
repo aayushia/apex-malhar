@@ -33,7 +33,7 @@ public class POJOobject {
     @Override
     public String toString()
     {
-        return "POJOobject [pickup_datetime=" + pickup_datetime + /*", dropoff_datetime=" + dropoff_datetime + /*", passenger_count=" + passenger_count +*/ ", trip_distance=" + trip_distance + ", pickup_longitude=" + pickup_longitude + ", pickup_latitude=" + pickup_latitude + ", total_amount=" + total_amount + "]";
+        return "POJOobject [pickup_datetime=" + pickup_datetime + ", total_amount=" + total_amount + /*", dropoff_datetime=" + dropoff_datetime + ", passenger_count=" + passenger_count + ", trip_distance=" + trip_distance + ", pickup_longitude=" + pickup_longitude + ", pickup_latitude=" + pickup_latitude + */"]";
     }
 
     public void setVendor(String vendor)

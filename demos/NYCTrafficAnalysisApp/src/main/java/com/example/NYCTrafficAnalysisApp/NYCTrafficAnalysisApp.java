@@ -39,22 +39,17 @@ public class NYCTrafficAnalysisApp implements StreamingApplication
 
   public String appName = "NYCTrafficAnalysisApp";
 
-  protected String PROP_STORE_PATH;
+  protected String prop_store_path, partition_count, number_of_buckets;
 
   public void populateDAG(DAG dag, Configuration conf)
   {
-    PROP_STORE_PATH = "dt.application." + appName + ".operator.StoreHDHT.fileStore.basePathPrefix";
     String csvSchema = SchemaUtils.jarResourceFileToString("csvSchema.json");
     String dcSchema = SchemaUtils.jarResourceFileToString("dcSchema.json");
 
     LineByLineFileInputOperator reader = dag.addOperator("Reader",  LineByLineFileInputOperator.class);
-    dag.getMeta(reader).getAttributes().put(OperatorContext.MEMORY_MB, 3072);
     CsvParser parser = dag.addOperator("Parser", CsvParser.class);
-    dag.getMeta(parser).getAttributes().put(OperatorContext.MEMORY_MB, 4096);
-    //ConsoleOutputOperator consoleOutput = dag.addOperator("Console", ConsoleOutputOperator.class);
-
-    //PubSubWebSocketAppDataQuery query = dag.addOperator("Query", PubSubWebSocketAppDataQuery.class);
-    //PubSubWebSocketAppDataResult queryResult = dag.addOperator("QueryResult", PubSubWebSocketAppDataResult.class);
+    dag.setAttribute(parser, OperatorContext.MEMORY_MB, 2048);
+    ConsoleOutputOperator consoleOutput = dag.addOperator("Console", ConsoleOutputOperator.class);
 
     reader.setDirectory("/user/aayushi/datasets");
     parser.setSchema(csvSchema);
@@ -62,38 +57,33 @@ public class NYCTrafficAnalysisApp implements StreamingApplication
     //Dimension Computation
     DimensionsComputationFlexibleSingleSchemaPOJO dimensions = dag.addOperator("DimensionsComputation", DimensionsComputationFlexibleSingleSchemaPOJO.class);
     //Set operator properties
-    //dag.getMeta(dimensions).getAttributes().put(OperatorContext.MEMORY_MB, 4096);
-    dag.setAttribute(dimensions, OperatorContext.MEMORY_MB, 4096);
-
+    dag.setAttribute(dimensions, OperatorContext.MEMORY_MB, 2048);
 
     //Key expression
-    {
-      Map<String, String> keyToExpression = Maps.newHashMap();
-      keyToExpression.put("time", "getPickup_datetime()");
-      keyToExpression.put("trip_distance", "getTrip_distance()");
-      //keyToExpression.put("dropoff_datetime", "getDropoff_datetime()");
-      keyToExpression.put("pickup_longitude", "getPickup_longitude()");
-      keyToExpression.put("pickup_latitude", "getPickup_latitude()");
-      dimensions.setKeyToExpression(keyToExpression);
-    }
+    Map<String, String> keyToExpression = Maps.newHashMap();
+    keyToExpression.put("time", "getPickup_datetime()");
+//  keyToExpression.put("trip_distance", "getTrip_distance()");
+//  keyToExpression.put("dropoff_datetime", "getDropoff_datetime()");
+//  keyToExpression.put("pickup_longitude", "getPickup_longitude()");
+//  keyToExpression.put("pickup_latitude", "getPickup_latitude()");
+    dimensions.setKeyToExpression(keyToExpression);
 
     //Aggregate expression
-    {
-      Map<String, String> aggregateToExpression = Maps.newHashMap();
-      aggregateToExpression.put("total_amount", "getTotal_amount()");
-     // aggregateToExpression.put("trip_distance", "getTrip_distance()");
-     // aggregateToExpression.put("passenger_count", "getPassenger_count()");
-      dimensions.setAggregateToExpression(aggregateToExpression);
-    }
+    Map<String, String> aggregateToExpression = Maps.newHashMap();
+    aggregateToExpression.put("total_amount", "getTotal_amount()");
+    // aggregateToExpression.put("trip_distance", "getTrip_distance()");
+    // aggregateToExpression.put("passenger_count", "getPassenger_count()");
+    dimensions.setAggregateToExpression(aggregateToExpression);
 
     dimensions.setConfigurationSchemaJSON(dcSchema);
-    dimensions.setUnifier(new DimensionsComputationUnifierImpl<InputEvent, Aggregate>());
-    dag.setUnifierAttribute(dimensions.output, OperatorContext.MEMORY_MB, 3072);
+    //dimensions.setUnifier(new DimensionsComputationUnifierImpl<InputEvent, Aggregate>());
+    //dag.setUnifierAttribute(dimensions.output, OperatorContext.MEMORY_MB, 3072);
     //dag.setUnifierAttribute(dimensions.output, Context.PortContext.UNIFIER_LIMIT, 2);
 
     //Dimension Store
     AppDataSingleSchemaDimensionStoreHDHT store = dag.addOperator("StoreHDHT", AppDataSingleSchemaDimensionStoreHDHT.class);
-    String basePath = Preconditions.checkNotNull(conf.get(PROP_STORE_PATH),
+    prop_store_path = "dt.application." + appName + ".operator.StoreHDHT.fileStore.basePathPrefix";
+    String basePath = Preconditions.checkNotNull(conf.get(prop_store_path),
       "base path should be specified in the properties.xml");
     TFileImpl hdsFile = new TFileImpl.DTFileImpl();
     basePath += System.currentTimeMillis();
@@ -101,34 +91,32 @@ public class NYCTrafficAnalysisApp implements StreamingApplication
     store.setFileStore(hdsFile);
 
     store.setConfigurationSchemaJSON(dcSchema);
+    partition_count = "dt.application." + appName + ".operator.StoreHDHT.partitionCount";
+    number_of_buckets = "dt.application." + appName + ".operator.StoreHDHT.numberOfBuckets";
+//    store.setPartitionCount(2);
+//    store.setNumberOfBuckets(2);
 
     //Query
     PubSubWebSocketAppDataQuery query = createAppDataQuery();
     URI queryUri = ConfigUtil.getAppDataQueryPubSubURI(dag, conf);
     logger.info("QueryUri: {}", queryUri);
     query.setUri(queryUri);
-    //query.setTopic("Query Topic");
     //using the EmbeddableQueryInfoProvider instead to get rid of the problem of query schema when latency is very long
     store.setEmbeddableQueryInfoProvider(query);
 
     //Query Result
     PubSubWebSocketAppDataResult queryResult = createAppDataResult();
-    queryResult.setUri(queryUri);
-    //queryResult.setTopic("Result Topic");
     dag.addOperator("QueryResult", queryResult);
+    queryResult.setUri(queryUri);
 
-    //Set remaining dag options
-    //dag.setAttribute(store, Context.OperatorContext.COUNTERS_AGGREGATOR,
-    //new BasicCounters.LongAggregator<MutableLong>());
-
-    //dag.setOutputPortAttribute(parser.outDup, Context.PortContext.TUPLE_CLASS, POJOobject.class);
+    //Setting Port Attributes
     dag.setOutputPortAttribute(parser.out, Context.PortContext.TUPLE_CLASS, POJOobject.class);
-    //dag.setInputPortAttribute(consoleOutput.input, Context.PortContext.TUPLE_CLASS, POJOobject.class);
+    dag.setInputPortAttribute(consoleOutput.input, Context.PortContext.TUPLE_CLASS, POJOobject.class);
     dag.setInputPortAttribute(dimensions.input, Context.PortContext.TUPLE_CLASS, POJOobject.class);
 
+    //Add Streams
     dag.addStream("FileInputToParser", reader.output, parser.in);
-    //dag.addStream("ParserToConsole", parser.outDup, consoleOutput.input);
-    dag.addStream("ParserToDC", parser.out, dimensions.input);
+    dag.addStream("ParserToDC", parser.out, dimensions.input, consoleOutput.input);
     dag.addStream("DimensionalStreamToStore", dimensions.output, store.input);
     dag.addStream("StoreToQueryResult", store.queryResult, queryResult.input);
   }
