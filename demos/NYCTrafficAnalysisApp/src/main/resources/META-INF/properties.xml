@@ -13,18 +13,15 @@
   </property>
   -->
 
-  <!--<property>-->
-    <!--<name>dt.application.NYCTrafficAnalysisApp.operator.Parser.attr.PARTITIONER</name>-->
-    <!--<value>com.datatorrent.common.partitioner.StatelessPartitioner:4</value>-->
-  <!--</property>-->
-  <!--<property>-->
-    <!--<name>dt.application.NYCTrafficAnalysisApp.operator.DimensionsComputation.attr.PARTITIONER</name>-->
-    <!--<value>com.datatorrent.common.partitioner.StatelessPartitioner:4</value>-->
-  <!--</property>-->
-  <!--<property>-->
-    <!--<name>dt.application.NYCTrafficAnalysisApp.operator.StoreHDHT.attr.PARTITIONER</name>-->
-    <!--<value>com.datatorrent.common.partitioner.StatelessPartitioner:2</value>-->
-  <!--</property>-->
+  <property>
+    <name>dt.application.NYCTrafficAnalysisApp.operator.Parser.attr.PARTITIONER</name>
+    <value>com.datatorrent.common.partitioner.StatelessPartitioner:4</value>
+  </property>
+  <property>
+    <name>dt.application.NYCTrafficAnalysisApp.operator.DimensionsComputation.attr.PARTITIONER</name>
+    <value>com.datatorrent.common.partitioner.StatelessPartitioner:4</value>
+  </property>
+
   <!--<property>-->
     <!--<name>dt.application.NYCTrafficAnalysisApp.operator.DimensionsComputation.outputport.output.attr.UNIFIER_LIMIT-->
     <!--</name>-->

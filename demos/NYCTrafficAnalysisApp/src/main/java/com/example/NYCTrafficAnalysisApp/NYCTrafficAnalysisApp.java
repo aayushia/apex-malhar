@@ -5,7 +5,6 @@ package com.example.NYCTrafficAnalysisApp;
 
 import org.apache.apex.malhar.lib.dimensions.DimensionsEvent.Aggregate;
 import org.apache.apex.malhar.lib.dimensions.DimensionsEvent.InputEvent;
-import org.apache.commons.lang.mutable.MutableLong;
 import org.apache.hadoop.conf.Configuration;
 import com.datatorrent.lib.expression.JavaExpressionParser;
 
@@ -49,7 +48,7 @@ public class NYCTrafficAnalysisApp implements StreamingApplication
     LineByLineFileInputOperator reader = dag.addOperator("Reader",  LineByLineFileInputOperator.class);
     CsvParser parser = dag.addOperator("Parser", CsvParser.class);
     dag.setAttribute(parser, OperatorContext.MEMORY_MB, 2048);
-    ConsoleOutputOperator consoleOutput = dag.addOperator("Console", ConsoleOutputOperator.class);
+//    ConsoleOutputOperator consoleOutput = dag.addOperator("Console", ConsoleOutputOperator.class);
 
     reader.setDirectory("/user/aayushi/datasets");
     parser.setSchema(csvSchema);
@@ -76,7 +75,7 @@ public class NYCTrafficAnalysisApp implements StreamingApplication
     dimensions.setAggregateToExpression(aggregateToExpression);
 
     dimensions.setConfigurationSchemaJSON(dcSchema);
-    //dimensions.setUnifier(new DimensionsComputationUnifierImpl<InputEvent, Aggregate>());
+    dimensions.setUnifier(new DimensionsComputationUnifierImpl<InputEvent, Aggregate>());
     //dag.setUnifierAttribute(dimensions.output, OperatorContext.MEMORY_MB, 3072);
     //dag.setUnifierAttribute(dimensions.output, Context.PortContext.UNIFIER_LIMIT, 2);
 
@@ -111,12 +110,12 @@ public class NYCTrafficAnalysisApp implements StreamingApplication
 
     //Setting Port Attributes
     dag.setOutputPortAttribute(parser.out, Context.PortContext.TUPLE_CLASS, POJOobject.class);
-    dag.setInputPortAttribute(consoleOutput.input, Context.PortContext.TUPLE_CLASS, POJOobject.class);
+//    dag.setInputPortAttribute(consoleOutput.input, Context.PortContext.TUPLE_CLASS, POJOobject.class);
     dag.setInputPortAttribute(dimensions.input, Context.PortContext.TUPLE_CLASS, POJOobject.class);
 
     //Add Streams
     dag.addStream("FileInputToParser", reader.output, parser.in);
-    dag.addStream("ParserToDC", parser.out, dimensions.input, consoleOutput.input);
+    dag.addStream("ParserToDC", parser.out, dimensions.input);
     dag.addStream("DimensionalStreamToStore", dimensions.output, store.input);
     dag.addStream("StoreToQueryResult", store.queryResult, queryResult.input);
   }
