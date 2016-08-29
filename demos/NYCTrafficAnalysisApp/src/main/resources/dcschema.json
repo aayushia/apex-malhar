@@ -1,6 +1,6 @@
 {"keys":
   [
-
+    {"name":"trip_distance","type":"double"}
   ],
   "timeBuckets":["1h","1d"],
   "values":
@@ -9,6 +9,6 @@
   ],
   "dimensions":
   [
-    {"combination":[]}
+    {"combination":["trip_distance"]}
   ]
 }
