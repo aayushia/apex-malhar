@@ -83,8 +83,8 @@ public class LineByLineFileInputOperator extends AbstractFileInputOperator<Strin
     {
     byte[] bytes = tuple.getBytes();
     output.emit(bytes);
-      if(++emittedTuples % 2 == 0)
-        Thread.sleep(10);
+      if(++emittedTuples % 10 == 0)
+        Thread.sleep(3);
     }
     catch (InterruptedException e)
     {

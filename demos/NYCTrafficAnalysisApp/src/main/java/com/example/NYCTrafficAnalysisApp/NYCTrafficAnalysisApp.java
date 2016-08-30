@@ -48,7 +48,7 @@ public class NYCTrafficAnalysisApp implements StreamingApplication
     LineByLineFileInputOperator reader = dag.addOperator("Reader",  LineByLineFileInputOperator.class);
     CsvParser parser = dag.addOperator("Parser", CsvParser.class);
     dag.setAttribute(parser, OperatorContext.MEMORY_MB, 2048);
-//    ConsoleOutputOperator consoleOutput = dag.addOperator("Console", ConsoleOutputOperator.class);
+    //ConsoleOutputOperator consoleOutput = dag.addOperator("Console", ConsoleOutputOperator.class);
 
     reader.setDirectory("/user/aayushi/datasets");
     parser.setSchema(csvSchema);
@@ -61,16 +61,16 @@ public class NYCTrafficAnalysisApp implements StreamingApplication
     //Key expression
     Map<String, String> keyToExpression = Maps.newHashMap();
     keyToExpression.put("time", "getPickup_datetime()");
-//  keyToExpression.put("trip_distance", "getTrip_distance()");
-//  keyToExpression.put("dropoff_datetime", "getDropoff_datetime()");
-//  keyToExpression.put("pickup_longitude", "getPickup_longitude()");
-//  keyToExpression.put("pickup_latitude", "getPickup_latitude()");
+    keyToExpression.put("trip_distance", "getTrip_distance()");
+    //keyToExpression.put("dropoff_datetime", "getDropoff_datetime()");
+    //keyToExpression.put("pickup_longitude", "getPickup_longitude()");
+    //keyToExpression.put("pickup_latitude", "getPickup_latitude()");
     dimensions.setKeyToExpression(keyToExpression);
 
     //Aggregate expression
     Map<String, String> aggregateToExpression = Maps.newHashMap();
     aggregateToExpression.put("total_amount", "getTotal_amount()");
-    // aggregateToExpression.put("trip_distance", "getTrip_distance()");
+    //aggregateToExpression.put("trip_distance", "getTrip_distance()");
     // aggregateToExpression.put("passenger_count", "getPassenger_count()");
     dimensions.setAggregateToExpression(aggregateToExpression);
 
@@ -110,7 +110,7 @@ public class NYCTrafficAnalysisApp implements StreamingApplication
 
     //Setting Port Attributes
     dag.setOutputPortAttribute(parser.out, Context.PortContext.TUPLE_CLASS, POJOobject.class);
-//    dag.setInputPortAttribute(consoleOutput.input, Context.PortContext.TUPLE_CLASS, POJOobject.class);
+    //dag.setInputPortAttribute(consoleOutput.input, Context.PortContext.TUPLE_CLASS, POJOobject.class);
     dag.setInputPortAttribute(dimensions.input, Context.PortContext.TUPLE_CLASS, POJOobject.class);
 
     //Add Streams

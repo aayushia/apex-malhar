@@ -24,11 +24,11 @@
     },
     {
       "name": "pickup_longitude",
-      "type": "Double"
+      "type": "String"
     },
     {
       "name": "pickup_latitude",
-      "type": "Double"
+      "type": "String"
     },
     {
       "name": "rate_code_id",
@@ -40,11 +40,11 @@
     },
     {
       "name": "dropoff_longitude",
-      "type": "Double"
+      "type": "String"
     },
     {
       "name": "dropoff_latitude",
-      "type": "Double"
+      "type": "String"
     },
     {
       "name": "payment_type",

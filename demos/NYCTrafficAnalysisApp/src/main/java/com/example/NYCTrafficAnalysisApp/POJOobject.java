@@ -15,12 +15,12 @@ public class POJOobject {
     private long dropoff_datetime;
     private int passenger_count;
     private double trip_distance;
-    private double pickup_longitude;
-    private double pickup_latitude;
+    private String pickup_longitude;
+    private String pickup_latitude;
     private int rate_code_id;
     private String store_and_fwd_flag;
-    private double dropoff_longitude;
-    private double dropoff_latitude;
+    private String dropoff_longitude;
+    private String dropoff_latitude;
     private String payment_type;
     private double fare_amount;
     private double extra;
@@ -33,7 +33,10 @@ public class POJOobject {
     @Override
     public String toString()
     {
-        return "POJOobject [pickup_datetime=" + pickup_datetime + ", total_amount=" + total_amount + /*", dropoff_datetime=" + dropoff_datetime + ", passenger_count=" + passenger_count + ", trip_distance=" + trip_distance + ", pickup_longitude=" + pickup_longitude + ", pickup_latitude=" + pickup_latitude + */"]";
+        return "POJOobject [pickup_datetime=" + pickup_datetime + ", total_amount=" + total_amount +
+          ", trip_distance=" + trip_distance + /*", dropoff_datetime=" + dropoff_datetime +
+          ", passenger_count=" + passenger_count + ", pickup_longitude=" + pickup_longitude +
+          ", pickup_latitude=" + pickup_latitude +*/ "]";
     }
 
     public void setVendor(String vendor)
@@ -87,22 +90,22 @@ public class POJOobject {
         this.trip_distance = trip_distance;
     }
 
-    public double getPickup_longitude()
+    public String getPickup_longitude()
     {
         return pickup_longitude;
     }
 
-    public void setPickup_longitude(double pickup_longitude)
+    public void setPickup_longitude(String pickup_longitude)
     {
         this.pickup_longitude = pickup_longitude;
     }
 
-    public double getPickup_latitude()
+    public String getPickup_latitude()
     {
         return pickup_latitude;
     }
 
-    public void setPickup_latitude(double pickup_latitude)
+    public void setPickup_latitude(String pickup_latitude)
     {
         this.pickup_latitude = pickup_latitude;
     }
@@ -117,14 +120,29 @@ public class POJOobject {
         this.store_and_fwd_flag = store_and_fwd_flag;
     }
 
-    public void setDropoff_longitude(double dropoff_longitude)
+    public String getDropoff_longitude()
+    {
+        return pickup_longitude;
+    }
+
+    public void setDropoff_longitude(String dropoff_longitude)
     {
         this.dropoff_longitude = dropoff_longitude;
     }
 
-    public void setDropoff_latitude(double dropoff_latitude)
+    public String getDropoff_latitude()
+    {
+        return pickup_longitude;
+    }
+
+    public void setDropoff_latitude(String dropoff_latitude)
     {
         this.dropoff_latitude = dropoff_latitude;
+    }
+
+    public String getPayment_type()
+    {
+        return payment_type;
     }
 
     public void setPayment_type(String payment_type)

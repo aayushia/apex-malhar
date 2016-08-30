@@ -9,6 +9,7 @@
   ],
   "dimensions":
   [
-    {"combination":["trip_distance"]}
+    {"combination":["trip_distance"]},
+    {"combination":[]}
   ]
 }
