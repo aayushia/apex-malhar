@@ -118,6 +118,7 @@ public class NYCTrafficAnalysisApp implements StreamingApplication
     dag.addStream("ParserToDC", parser.out, dimensions.input);
     dag.addStream("DimensionalStreamToStore", dimensions.output, store.input);
     dag.addStream("StoreToQueryResult", store.queryResult, queryResult.input);
+    //test 1
   }
 
   protected PubSubWebSocketAppDataQuery createAppDataQuery()
